@@ -113,7 +113,7 @@ export class Qianfan {
      * @param body 请求参数
      * @returns Promise<ChatResp>
      */
-    public async plugin(body: PluginBody<T>): Promise<PluginResp<T>> {
+    public async plugin(body: PluginBody): Promise<PluginResp> {
         if (this.expires_in < Date.now() / 1000) {
             await this.getAccessToken();
         }
