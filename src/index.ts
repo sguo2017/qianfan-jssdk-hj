@@ -59,10 +59,12 @@ export class Qianfan {
      * 千帆大模型
      * @param API_KEY 应用的API Key，在千帆控制台-应用列表查看
      * @param SECRET_KEY 应用的Secret Key，在千帆控制台-应用列表查看
+     * @param SERVICE_NAME_SUFFIX 只有服务状态为上线状态，才可以查看自动生成的服务地址、服务后缀名称
      */
     constructor(API_KEY: string, SECRET_KEY: string) {
         this.API_KEY = API_KEY;
         this.SECRET_KEY = SECRET_KEY;
+        this.SERVICE_NAME_SUFFIX = SERVICE_NAME_SUFFIX;
     }
 
     /**
@@ -105,6 +107,24 @@ export class Qianfan {
         return resp.data as ChatResp<T>;
     }
 
+    /**
+     * 插件应用-知识库 ：https://cloud.baidu.com/doc/WENXINWORKSHOP/s/Blmygz6t6
+     * @param model 模型名称
+     * @param body 请求参数
+     * @returns Promise<ChatResp>
+     */
+    public async plugin(body: PluginBody<T>): Promise<PluginResp<T>> {
+        if (this.expires_in < Date.now() / 1000) {
+            await this.getAccessToken();
+        }
+        const url = `${this.api_base}/plugin/${SERVICE_NAME_SUFFIX}?access_token=${this.access_token}`;
+        const resp = await axios.post(url, body, { headers: this.headers });
+        if (resp.data?.error_code && resp.data?.error_msg) {
+            throw new Error(resp.data.error_msg);
+        }
+        return resp.data as PluginResp<T>;
+    }
+    
     /**
      * 发起文生图请求
      * @param body 请求参数
