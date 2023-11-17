@@ -481,3 +481,76 @@ export interface Text2ImageResp {
      */
     usage: Text2ImageRespUsage;
 }
+
+/**
+ * 插件请求参数
+ */
+export interface PluginBody {
+    /**
+     * 查询信息，说明：（1）成员不能为空（2）长度不能超过1000个字符
+     */
+    query: string;
+
+    /**
+     * 需要调用的插件，参数为插件ID，插件ID可在插件列表-插件详情中获取。
+     */
+    plugins?: string[]; 
+    /**
+     * 是否返回插件的原始请求信息，默认为 true
+     */
+    verbose?: true;
+}
+
+/**
+ * 插件响应
+ */
+export interface PluginResp {
+    /**
+     * 唯一的log id，用于问题定位
+     */
+    log_id: string;
+    /**
+     * 请求的id
+     */
+    id: string;
+    /**
+     * 回包类型。image：图像生成返回
+     */
+    object: string;
+    /**
+     * 时间戳
+     */
+    created: number;
+    /**
+     * 表示当前子句的序号，只有在流式接口模式下会返回该字段
+     */
+    sentence_id: number;
+    /**
+     * 表示当前子句是否是最后一句，只有在流式接口模式下会返回该字段
+     */
+    is_end: boolean;
+    /**
+     * 插件返回结果
+     */
+    result: string;
+    /**
+     * 当前生成的结果是否被截断
+     */
+    is_truncated: boolean;
+    /**
+     * 表示用户输入是否存在安全，是否关闭当前会话，清理历史会话信息
+     */
+    need_clear_history: boolean;
+    /**
+     * 当need_clear_history为true时，此字段会告知第几轮对话有敏感信息，如果是当前问题，ban_round = -1
+     */
+    ban_round: boolean;    
+    /**
+     * token统计信息，token数 = 汉字数+单词数*1.3 （仅为估算逻辑）
+     */
+    usage: TokenUsage<T>;    
+    /**
+     * 插件的原始请求信息
+     */
+    object: object;
+}
